@@ -15,7 +15,7 @@ Discord limits each chat-input command to 25 subcommands, so NODE groups its com
 - `/fun` — 25 fun actions
 - `/config` — 25 configuration/status actions
 
-That is 200 grouped actions, plus the original standalone commands such as `/ping`, `/ban`, `/kick`, `/warn`, `/welcome`, `/logs`, and `/ticket-panel`. Some actions require the matching Discord permission and bot role hierarchy. Channel types and role features are also subject to Discord API support.
+That is 200 grouped command actions. The separate `/ticket-panel` command is also available. For example, use `/utility ping`, `/moderation ban`, and `/config welcome-on`. Some actions require the matching Discord permission and bot role hierarchy. Channel types and role features are also subject to Discord API support.
 
 ## Stack
 
