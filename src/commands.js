@@ -41,7 +41,7 @@ if(a==='nick'||a==='clear-nick'){if(!m.manageable)throw Error('Cannot edit this 
 if(a==='role-add'||a==='role-remove'){perm(i,P.ManageRoles);req(r,'role');await m.roles[a==='role-add'?'add':'remove'](r);return reply(i,'Member role updated.');}
 if(a.startsWith('voice-')){perm(i,P.MuteMembers);if(!m.voice.channel)throw Error('Member not in voice.');await m.voice[a.includes('deafen')?'setDeaf':'setMute'](a==='voice-mute'||a==='voice-deafen');return reply(i,'Voice state updated.');}
 if(a==='move'){perm(i,P.MoveMembers);if(!m.voice.channel||!ch.isVoiceBased())throw Error('Choose a voice channel and a member in voice.');await m.voice.setChannel(ch);return reply(i,'Member moved.');}
-return reply(i,'Use /moderation warnings to review cases.');
+if(a==='case'){if(!target)throw Error('Provide a user to inspect their latest case.');const rows=await getCases(g.id,target.id);const latest=rows[0];return reply(i,latest?'Latest case: '+latest.action+' — '+latest.reason:'No cases found.');}return reply(i,'Unknown moderation action.');
 }
 if(group==='roles'){
 perm(i,P.ManageRoles);const target=i.options.getUser('user'),m=target?await g.members.fetch(target.id).catch(()=>null):null;
@@ -62,7 +62,7 @@ if(a==='delete'){await ch.delete();return reply(i,'Channel deleted.');}if(a==='r
 if(a==='topic'||a==='clear-topic'){if(!ch.setTopic)throw Error('Choose text channel.');await ch.setTopic(a==='clear-topic'?null:v.slice(0,1024));return reply(i,'Topic updated.');}
 if(a==='slowmode'){await ch.setRateLimitPerUser(Math.min(21600,n||0));return reply(i,'Slowmode updated.');}
 if(['lock','unlock','hide','unhide'].includes(a)){const h=a==='hide'||a==='unhide',d=a==='lock'||a==='hide';await ch.permissionOverwrites.edit(g.roles.everyone,{[h?P.ViewChannel:P.SendMessages]:d?false:null});return reply(i,'Permissions updated.');}
-if(a==='clone')return reply(i,'Cloned '+await ch.clone());if(a==='info')return reply(i,ch.name+' | '+ch.id+' | type '+ch.type);if(a==='list')return reply(i,g.channels.cache.map(x=>x.name).slice(0,80).join(', '));
+if(a==='clone')return reply(i,'Cloned '+await ch.clone());if(a==='info'||a==='voice-info'||a==='text-info'){if(a==='voice-info'&&!ch.isVoiceBased())throw Error('Choose a voice channel.');if(a==='text-info'&&!ch.isTextBased())throw Error('Choose a text channel.');return reply(i,ch.name+' | '+ch.id+' | type '+ch.type);}if(a==='list')return reply(i,g.channels.cache.map(x=>x.name).slice(0,80).join(', '));
 if(a==='set-nsfw'||a==='unset-nsfw'){if(!ch.setNSFW)throw Error('Unsupported channel type.');await ch.setNSFW(a==='set-nsfw');return reply(i,'NSFW flag updated.');}
 if(a==='set-bitrate'){if(!ch.setBitrate||n<8000||n>384000)throw Error('Choose voice channel and bitrate 8000–384000.');await ch.setBitrate(n);return reply(i,'Bitrate updated.');}
 if(a==='set-user-limit'){if(!ch.setUserLimit||n>99)throw Error('Choose voice channel and limit 0–99.');await ch.setUserLimit(n);return reply(i,'User limit updated.');}
